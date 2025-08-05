@@ -196,24 +196,18 @@ window.addEventListener('DOMContentLoaded', function() {
     renderTrades();
     const btnContainer = document.createElement('div');
     btnContainer.style.margin = '10px 0';
-    
     document.body.insertBefore(btnContainer, document.body.firstChild);
     document.getElementById('exportBtn').onclick = exportTrades;
-    document.getElementById('importBtn').onclick = function() {
-        document.getElementById('importFile').click();
-    };
-    document.getElementById('importFile').addEventListener('change', importTrades);
+    // Removed broken importFile event listener
 });
 
 function renderTrades() {
     const tbody = document.querySelector('#tradeTable tbody');
     tbody.innerHTML = '';
-    trades.forEach(async (trade, idx) => {
+    trades.forEach((trade, idx) => {
         let rrDisplay = '';
         const takeProfitType = trade.takeProfitTypeValue || trade.takeProfitType;
-        // Risk-Reward display logic
         if (takeProfitType === 'Risk-Reward') {
-            // Show RR ratio (e.g. 1:2, 1:3, or custom value)
             let rrVal = trade.riskReward;
             if (["1:1","1:2","1:3"].includes(rrVal)) {
                 rrDisplay = rrVal;
@@ -223,7 +217,6 @@ function renderTrades() {
                 rrDisplay = '';
             }
         } else if (takeProfitType === 'Amount') {
-            // Show entered amount only
             let amountVal = trade.amountReward || trade.riskReward || '';
             if (amountVal && !isNaN(parseFloat(amountVal))) {
                 rrDisplay = parseFloat(amountVal);
@@ -235,62 +228,57 @@ function renderTrades() {
         } else if (takeProfitType === 'Percentage') {
             rrDisplay = trade.stopLossAmount ? trade.stopLossAmount : '';
         }
-        // Create row and apply cell padding for better layout
         let _potentialProfit = trade.potentialProfit;
         if (takeProfitType == 'Amount' || takeProfitType == 'Manual') {
             _potentialProfit = Math.abs(parseFloat(_potentialProfit) - parseFloat(trade.positionValue));
         }
         _potentialProfit = parseFloat(_potentialProfit) || 0;
-
-        // Add current price cell (fetch from Yahoo Finance using AllOrigins proxy)
-        let currentPrice = 'N/A';
         const symbolStr = typeof trade.symbol === 'string' ? trade.symbol : String(trade.symbol);
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="text-align:center; padding:6px 8px;">${idx + 1}</td>
-            <td style="padding:6px 8px;">${trade.dateOpened || ''}</td>
-            <td style="padding:6px 8px;">${trade.tradeType}</td>
-            <td style="padding:6px 8px;">${symbolStr}</td>
-            <td style="text-align:right; padding:6px 8px;">${trade.entry}</td>
-             <td style="text-align:right; padding:6px 8px;">${trade.lotSize}</td>
-    
-            <td style="padding:6px 8px;">${trade.stopLossType}</td>
-            <td style="text-align:right; padding:6px 8px;">${trade.stopLossPrice}</td>
-           
-            <td style="padding:6px 8px;">${takeProfitType}</td>
-            <td style="text-align:right; padding:6px 8px;">${rrDisplay}</td>
-           
-            <td style="text-align:right; padding:6px 8px;">${trade.positionValue}</td>
-            <td style="text-align:right; padding:6px 8px; color:#d9534f;">${trade.potentialLoss}</td>
-            <td style="text-align:right; padding:6px 8px; color:#5cb85c;">${_potentialProfit.toFixed(2)}</td>
-            <td style="text-align:center; padding:6px 8px; min-width:110px;">
-                ${trades.length > 0 ? `<button class="edit-btn" data-idx="${idx}" style="margin-right:4px;">Edit</button><button class="delete-btn" data-idx="${idx}" style="background:#d9534f; color:#fff;">Delete</button>` : '&nbsp;'}
+            <td>${idx + 1}</td>
+            <td>${trade.dateOpened || ''}</td>
+            <td>${trade.tradeType}</td>
+            <td>${symbolStr}</td>
+            <td>${trade.entry}</td>
+            <td>${trade.lotSize}</td>
+            <td id="currentPrice${idx}">N/A</td>
+            <td id="currentValuation${idx}">N/A</td>
+            <td>${trade.stopLossType}</td>
+            <td>${trade.stopLossPrice}</td>
+            <td>${takeProfitType}</td>
+            <td>${rrDisplay}</td>
+            <td>${trade.positionValue}</td>
+            <td style="color:#d9534f;">${trade.potentialLoss}</td>
+            <td style="color:#5cb85c;">${_potentialProfit.toFixed(2)}</td>
+            <td>
+                <button class="edit-btn" data-idx="${idx}">Edit</button>
+                <button class="delete-btn" data-idx="${idx}">Delete</button>
             </td>
         `;
         tbody.appendChild(tr);
-
-        // If currentPrice was fetched asynchronously, update cell after fetch
+        // Fetch and update current price and valuation
         if (symbolStr) {
-            (async () => {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbolStr)}`;
-                try {
-                    const res = await fetch(proxyUrl + encodeURIComponent(url));
-                    const data = await res.json();
-                    if (data && data.quoteResponse && data.quoteResponse.result && data.quoteResponse.result.length > 0) {
-                        const price = data.quoteResponse.result[0].regularMarketPrice;
-                        document.getElementById(`currentPrice${idx}`).textContent = price !== undefined ? price : 'N/A';
-                    } else {
-                        document.getElementById(`currentPrice${idx}`).textContent = 'N/A';
+            fetch(`/api/price?symbol=${encodeURIComponent(symbolStr)}`)
+                .then(res => res.json())
+                .then(data => {
+                    let price = 'N/A';
+                    let valuation = 'N/A';
+                    if (data && data.price !== undefined && data.price !== null) {
+                        price = data.price;
+                        if (!isNaN(price) && !isNaN(trade.lotSize)) {
+                            valuation = (price * trade.lotSize).toFixed(2);
+                        }
                     }
-                } catch (e) {
+                    document.getElementById(`currentPrice${idx}`).textContent = price !== undefined ? price : 'N/A';
+                    document.getElementById(`currentValuation${idx}`).textContent = valuation;
+                })
+                .catch(() => {
                     document.getElementById(`currentPrice${idx}`).textContent = 'N/A';
-                }
-            })();
+                    document.getElementById(`currentValuation${idx}`).textContent = 'N/A';
+                });
         }
     });
-
-    // Add event listeners for edit and delete buttons
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const idx = this.getAttribute('data-idx');
