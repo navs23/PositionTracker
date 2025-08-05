@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trade Position Tracker</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!-- Favicon -->
    
     <!-- Google Fonts -->
@@ -147,7 +147,7 @@
             </section>
         </main>
     </div>
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
         // Simple symbol search using Yahoo Finance API
         // This is a demo and may need a proxy for CORS in production

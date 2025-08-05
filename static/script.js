@@ -1,3 +1,4 @@
+// JS content from your original script.js
 // Modal logic
 const modal = document.getElementById('tradeModal');
 const addTradeBtn = document.getElementById('addTradeBtn');
