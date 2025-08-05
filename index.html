@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Position Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Favicon -->
+   
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="modern-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-chart-line fa-2x"></i>
+                <span class="brand-title">Position Tracker</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#"><i class="fa-solid fa-table-list"></i> Trade History</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-actions">
+                <button id="addTradeBtn" class="main-btn"><i class="fa-solid fa-plus"></i> Add Position</button>
+                <button id="importBtn" class="main-btn" title="Import"><i class="fa-solid fa-file-import"></i> Import</button>
+                <button id="exportBtn" class="main-btn" title="Export"><i class="fa-solid fa-file-export"></i> Export</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="modern-header">
+                <h1>Trade Position Tracker</h1>
+                <span class="subtitle">Track your trades, risk, and profit visually</span>
+            </header>
+           
+                <!-- Add Position button moved to sidebar -->
+                <div id="tradeModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" id="closeModal">&times;</span>
+                        <h2><i class="fa-solid fa-pen-to-square"></i> Add Trade Position</h2>
+                        <form id="tradeForm">
+                            <div class="form-row">
+                                <label for="tradeType"><i class="fa-solid fa-arrows-up-down"></i> Trade Type:</label>
+                                <select id="tradeType" required>
+                                    <option value="Buy/Long">Buy/Long</option>
+                                    <option value="Sell/Short">Sell/Short</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <label for="symbol"><i class="fa-solid fa-building-columns"></i> Stock Symbol:</label>
+                                <input type="text" id="symbol" maxlength="10" required>
+                                <button type="button" id="findSymbolBtn" style="margin-left:8px;"><i class="fa-solid fa-magnifying-glass"></i> Find</button>
+                            </div>
+                            <div class="form-row">
+                                <label for="entryPrice"><i class="fa-solid fa-arrow-right-arrow-left"></i> Entry Price:</label>
+                                <input type="number" id="entryPrice" step="0.01" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="lotSize"><i class="fa-solid fa-layer-group"></i> Lot Size/Qty:</label>
+                                <input type="number" id="lotSize" step="1" min="1" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="stopLossType"><i class="fa-solid fa-shield-halved"></i> Stop Loss Type:</label>
+                                <select id="stopLossType" required>
+                                    <option value="Amount">Amount</option>
+                                    <option value="Percentage">Percentage</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <label for="stopLossAmount"><i class="fa-solid fa-money-bill-trend-up"></i> Amount:</label>
+                                <input type="number" id="stopLossAmount" step="0.01" required>
+                            </div>
+                            <div class="form-row">
+                                <label for="takeProfitType"><i class="fa-solid fa-bullseye"></i> Take Profit Type:</label>
+                                <select id="takeProfitType" required>
+                                    <option value="Risk-Reward">Risk-Reward</option>
+                                    <option value="Amount">Amount</option>
+                                    <option value="Percentage">Percentage</option>
+                                </select>
+                            </div>
+                            <div class="form-row" id="rrOrAmountRow">
+                                <label id="rrOrAmountLabel" for="rrOrAmount"><i class="fa-solid fa-scale-balanced"></i> Risk-Reward Ratio:</label>
+                                <select id="riskReward" required>
+                                    <option value="1:1">1:1</option>
+                                    <option value="1:2">1:2</option>
+                                    <option value="1:3">1:3</option>
+                                    <option value="Custom">Custom</option>
+                                </select>
+                                <input type="number" id="amountReward" style="display:none;" step="0.01" placeholder="Enter amount">
+                            </div>
+                            <div id="customRiskRewardContainer" style="display:none;" class="form-row">
+                                <label for="customRiskReward"><i class="fa-solid fa-sliders"></i> Custom Ratio:</label>
+                                <input type="text" id="customRiskReward" placeholder="e.g. 1:2.5">
+                            </div>
+                            <div id="manualTargetContainer" style="display:none;" class="form-row">
+                                <label for="manualTarget"><i class="fa-solid fa-bullseye-arrow"></i> Manual Target Price:</label>
+                                <input type="number" id="manualTarget" step="0.01" placeholder="Enter target price">
+                            </div>
+                            <div class="form-row">
+                                <label for="dateOpened"><i class="fa-solid fa-calendar-day"></i> Date Opened:</label>
+                                <input type="datetime-local" id="dateOpened">
+                            </div>
+                            <button type="submit" class="main-btn"><i class="fa-solid fa-save"></i> Save Trade</button>
+                        </form>
+                        <div id="result"></div>
+                    </div>
+                </div>
+           
+            <section class="card card-table">
+                <h2><i class="fa-solid fa-table-list"></i> Trade History</h2>
+                <div class="table-responsive">
+                    <table id="tradeTable">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">#</th>
+                                <th rowspan="2">Date Opened</th>
+                                <th rowspan="2"><i class="fa-solid fa-arrows-up-down"></i> Trade Type</th>
+                                <th rowspan="2"><i class="fa-solid fa-building-columns"></i> Symbol</th>
+                                <th rowspan="2"><i class="fa-solid fa-arrow-right-arrow-left"></i> Entry Price</th>
+                                <th rowspan="2"><i class="fa-solid fa-layer-group"></i> Qty</th>
+       
+
+                                <th colspan="2"><i class="fa-solid fa-shield-halved"></i> Stop Loss</th>
+        
+                                <th colspan="2"><i class="fa-solid fa-bullseye"></i> Take Profit</th>
+                                <th rowspan="2"><i class="fa-solid fa-coins"></i> Position Value</th>
+                                <th colspan="2"><i class="fa-solid fa-arrow-trend-up"></i> Potential</th>
+                                <th rowspan="2"><i class="fa-solid fa-gear"></i> Actions</th>
+                            </tr>
+                            <tr>
+                                <th><i class="fa-solid fa-shield-halved"></i> Type</th>
+                                <th><i class="fa-solid fa-money-bill-trend-up"></i> Amount</th>
+                                <th><i class="fa-solid fa-bullseye"></i> Type</th>
+                                <th><i class="fa-solid fa-scale-balanced"></i> Risk-Reward</th>
+                                <th><i class="fa-solid fa-arrow-down"></i> Loss</th>
+                                <th><i class="fa-solid fa-arrow-up"></i> Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Trades will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Simple symbol search using Yahoo Finance API
+        // This is a demo and may need a proxy for CORS in production
+
+        document.getElementById('findSymbolBtn').onclick = async function() {
+            const query = document.getElementById('symbol').value.trim();
+            if (!query) {
+                alert('Enter company name or symbol to search.');
+                return;
+            }
+            // Use public CORS proxy for Yahoo Finance API
+            const proxyUrl = 'https://corsproxy.io/?';
+            const url = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(query)}`;
+            try {
+                const res = await fetch(proxyUrl + url);
+                const data = await res.json();
+                if (data && data.quotes && data.quotes.length > 0) {
+                    const first = data.quotes[0];
+                    document.getElementById('symbol').value = first.symbol;
+                    alert(`Found symbol: ${first.symbol} (${first.shortname || first.longname || ''})`);
+                } else {
+                    alert('No symbol found.');
+                }
+            } catch (e) {
+                alert('Error fetching symbol.');
+            }
+        };
+
+        // Export trades to JSON file
+        document.getElementById('exportBtn').onclick = function() {
+            if (typeof window.localStorage !== 'undefined') {
+                const trades = localStorage.getItem('trades');
+                if (!trades) {
+                    alert('No trades to export.');
+                    return;
+                }
+                const blob = new Blob([trades], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'trades.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        };
+
+        // Import trades from JSON file
+        document.getElementById('importBtn').onclick = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,application/json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const data = JSON.parse(evt.target.result);
+                        localStorage.setItem('trades', JSON.stringify(data));
+                        alert('Trades imported! Please refresh the page to see changes.');
+                    } catch (err) {
+                        alert('Invalid JSON file.');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        };
+    </script>
+</body>
+</html>

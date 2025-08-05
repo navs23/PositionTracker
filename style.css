@@ -1,0 +1,279 @@
+/* Custom cell backgrounds for grouped columns */
+/*
+IMPORTANT: For these colors to show, your table cell <td> elements must have the classes:
+  - trade-table-stoploss
+  - trade-table-takeprofit
+  - trade-table-potential
+Check your table rendering code in script.js to ensure these classes are applied to the correct cells.
+*/
+.card-table table tbody td.trade-table-stoploss,
+.card-table table tr td.trade-table-stoploss {
+    background-color: #ffe5b4 !important;
+    border: 1px solid #ffd580 !important;
+}
+.card-table table tbody td.trade-table-takeprofit,
+.card-table table tr td.trade-table-takeprofit {
+    background-color: #b4ffd6 !important;
+    border: 1px solid #80ffc2 !important;
+}
+.card-table table tbody td.trade-table-potential,
+.card-table table tr td.trade-table-potential {
+    background-color: #ffd4e5 !important;
+    border: 1px solid #ff80b3 !important;
+}
+/* Modern Layout for Position Tracker */
+body {
+    background: #f4f6fb;
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    color: #222;
+}
+.modern-layout {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    background: linear-gradient(180deg, #2b5876 0%, #4e4376 100%);
+    color: #fff;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 0 0 0;
+    box-shadow: 2px 0 12px rgba(44,62,80,0.08);
+}
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+.brand-title {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-nav li {
+    margin: 18px 0;
+}
+.sidebar-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+.sidebar-nav a:hover {
+    color: #ffd700;
+}
+.main-content {
+    flex: 1;
+    padding: 32px 24px 24px 24px;
+    
+    margin: 0 auto;
+}
+.modern-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 32px;
+}
+.modern-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #2b5876;
+}
+.subtitle {
+    font-size: 1.1rem;
+    color: #555;
+}
+.card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(44,62,80,0.08);
+    margin-bottom: 32px;
+    padding: 32px 24px;
+}
+.card-form {
+    max-width: 600px;
+    margin-bottom: 32px;
+}
+.card-table {
+    padding: 24px 16px;
+}
+.actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+.main-btn {
+    background: linear-gradient(90deg, #2b5876 0%, #4e4376 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+    transition: background 0.2s;
+}
+.main-btn:hover {
+    background: linear-gradient(90deg, #4e4376 0%, #2b5876 100%);
+}
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 16px;
+}
+.form-row label {
+    min-width: 160px;
+    font-weight: 500;
+    color: #2b5876;
+}
+.form-row input,
+.form-row select {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #dbe2ef;
+    font-size: 1rem;
+    background: #f7f9fc;
+    color: #222;
+}
+.form-row input:focus,
+.form-row select:focus {
+    outline: none;
+    border-color: #4e4376;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background: rgba(44,62,80,0.18);
+}
+.modal-content {
+    background: #fff;
+    margin: 60px auto;
+    padding: 32px 24px;
+    border-radius: 16px;
+    max-width: 520px;
+    box-shadow: 0 2px 16px rgba(44,62,80,0.18);
+    position: relative;
+}
+.close {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    font-size: 1.6rem;
+    color: #4e4376;
+    cursor: pointer;
+}
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+}
+thead th {
+    background: #2b5876;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 8px;
+    font-size: 1rem;
+    border-bottom: 2px solid #4e4376;
+}
+tbody td {
+    padding: 10px 8px;
+    font-size: 0.98rem;
+    border-bottom: 1px solid #eaeaea;
+}
+tbody tr:last-child td {
+    border-bottom: none;
+}
+.edit-btn, .delete-btn {
+    background: #f7f9fc;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-right: 4px;
+    transition: background 0.2s;
+}
+.edit-btn {
+    color: #2b5876;
+    border: 1px solid #2b5876;
+}
+.edit-btn:hover {
+    background: #e3eafc;
+}
+.delete-btn {
+    color: #fff;
+    background: #d9534f;
+    border: 1px solid #d9534f;
+}
+.delete-btn:hover {
+    background: #b52b27;
+}
+@media (max-width: 900px) {
+    .modern-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 16px 24px;
+        box-shadow: none;
+    }
+    .main-content {
+        padding: 16px 8px;
+    }
+    .card {
+        padding: 16px 8px;
+    }
+}
+@media (max-width: 600px) {
+    .card-form, .card-table {
+        padding: 8px 2px;
+    }
+    .form-row label {
+        min-width: 110px;
+        font-size: 0.95rem;
+    }
+    .sidebar-brand {
+        font-size: 1.1rem;
+    }
+    .brand-title {
+        font-size: 1rem;
+    }
+    .sidebar-nav a {
+        font-size: 0.98rem;
+    }
+    thead th, tbody td {
+        font-size: 0.92rem;
+        padding: 8px 4px;
+    }
+}
